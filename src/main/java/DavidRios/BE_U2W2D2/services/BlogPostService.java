@@ -2,6 +2,7 @@ package DavidRios.BE_U2W2D2.services;
 
 import DavidRios.BE_U2W2D2.entities.BlogPost;
 import DavidRios.BE_U2W2D2.exceptions.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -10,15 +11,17 @@ import java.util.Random;
 
 @Service
 public class BlogPostService {
-    private List<BlogPost> blogPosts = new ArrayList<>();
+
+    @Autowired
+    BlogPostService blogPostService;
 
     public List<BlogPost> getBlogPosts() {
-        return this.blogPosts;
+        return this.blogPostService.getBlogPosts();
     }
     
     public BlogPost getPostById(long id) {
         BlogPost found = null;
-        for (BlogPost post : this.blogPosts) {
+        for (BlogPost post : getBlogPosts()) {
             if (post.getId() == id) found = post;
         }
         if (found == null) throw new NotFoundException(id);
@@ -26,9 +29,7 @@ public class BlogPostService {
     }
 
     public BlogPost savePost(BlogPost newPost) {
-        Random rand = new Random();
-        newPost.setId(rand.nextLong(1, 20000));
-        this.blogPosts.add(newPost);
+        this.blogPostService.savePost(newPost);
         return newPost;
     }
 
@@ -44,6 +45,6 @@ public class BlogPostService {
     }
 
     public void deletePost (long id) {
-        this.blogPosts.removeIf(current -> current.getId() == id);
+        this.blogPostService.deletePost(id);
     }
 }
